@@ -1,8 +1,13 @@
 {
   "mcpServers": {
     "xcodebuildmcp": {
-      "command": "npx",
-      "args": ["-y", "xcodebuildmcp@latest", "mcp"],
+      "command": "sh",
+      "args": [
+        "-c",
+        "set -eu; if ! command -v npm >/dev/null 2>&1; then echo 'xcodebuildmcp requires npm' >&2; exit 127; fi; if ! xcodebuildmcp_bin=$(npm exec --yes --package xcodebuildmcp@latest -- which xcodebuildmcp); then echo 'npm could not resolve xcodebuildmcp@latest' >&2; exit 127; fi; if [ -z \"$xcodebuildmcp_bin\" ]; then echo 'npm could not resolve xcodebuildmcp@latest' >&2; exit 127; fi; node_options=${NODE_OPTIONS:-}; case \" $node_options \" in *' --max-old-space-size='*) ;; *) node_options=${node_options:+$node_options }--max-old-space-size=48 ;; esac; case \" $node_options \" in *' --max-semi-space-size='*) ;; *) node_options=${node_options:+$node_options }--max-semi-space-size=4 ;; esac; case \" $node_options \" in *' --jitless '*) ;; *) node_options=${node_options:+$node_options }--jitless ;; esac; export NODE_OPTIONS=\"$node_options\"; exec \"$xcodebuildmcp_bin\" \"$@\"",
+        "xcodebuildmcp-launcher",
+        "mcp"
+      ],
       "env": {
         "XCODEBUILDMCP_ENABLED_WORKFLOWS": "simulator,ui-automation,debugging,logging"
       }
